@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Avaliação de Apresentação</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:system-ui,sans-serif;background:#f5f5f3;color:#1a1a1a;min-height:100vh;padding:1.25rem 1rem 3rem}
+  .container{max-width:560px;margin:0 auto}
+  h1{font-size:18px;font-weight:600;margin-bottom:3px}
+  .subtitle{font-size:12px;color:#666;margin-bottom:1rem;line-height:1.5}
+  .id-badge{display:inline-flex;align-items:center;gap:6px;background:#eef4fb;border:1px solid #c2d9f0;border-radius:20px;padding:4px 12px;font-size:12px;color:#185FA5;margin-bottom:1rem;font-weight:500}
+  .instrucoes{background:#eef4fb;border-left:4px solid #185FA5;border-radius:6px;padding:10px 14px;margin-bottom:1rem;font-size:12px;color:#1a1a1a;line-height:1.6}
+  .instrucoes b{color:#185FA5}
+  .grupo-box{background:#fff;border:1px solid #e0e0d8;border-radius:12px;padding:1rem;margin-bottom:1rem}
+  .grupo-box label{font-size:13px;font-weight:600;display:block;margin-bottom:8px}
+  .grupo-box select{width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid #ccc;font-size:15px;background:#f5f5f3;color:#1a1a1a;appearance:none;cursor:pointer}
+  .grupo-box select:focus{outline:none;border-color:#185FA5}
+  .etapa{background:#fff;border:1px solid #e0e0d8;border-radius:12px;padding:1rem;margin-bottom:.75rem}
+  .etapa-titulo{font-size:14px;font-weight:600;margin-bottom:2px}
+  .etapa-sub{font-size:11px;color:#888;margin-bottom:.75rem}
+  .likert{display:flex;flex-direction:column;gap:8px}
+  .likert-opt{display:flex;align-items:center;gap:10px;cursor:pointer;padding:8px 10px;border-radius:8px;border:1.5px solid #e0e0d8;background:#f9f9f7;transition:.15s}
+  .likert-opt:active{background:#eef4fb}
+  .likert-opt input{display:none}
+  .likert-opt input:checked ~ .opt-content{color:#185FA5}
+  .likert-opt:has(input:checked){border-color:#185FA5;background:#eef4fb}
+  .opt-num{width:28px;height:28px;border-radius:50%;border:1.5px solid #ccc;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#888;flex-shrink:0;transition:.15s}
+  .likert-opt:has(input:checked) .opt-num{background:#185FA5;border-color:#185FA5;color:#fff}
+  .opt-content{flex:1}
+  .opt-desc{font-size:12px;color:#444;line-height:1.3}
+  .opt-pts{font-size:11px;color:#888;font-weight:600;margin-top:1px}
+  .pitch-section{margin-top:.5rem}
+  .pitch-item{border:1px solid #e0e0d8;border-radius:8px;padding:10px;margin-bottom:.5rem}
+  .pitch-label{font-size:13px;font-weight:600;margin-bottom:8px;color:#1a1a1a}
+  .pitch-label span{font-size:11px;font-weight:400;color:#888}
+  .check-row{display:flex;gap:6px}
+  .check-opt{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+  .check-opt input{display:none}
+  .check-circle{width:100%;height:36px;border-radius:8px;border:1.5px solid #ccc;background:#f5f5f3;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#888;transition:.15s}
+  .check-opt:has(input:checked) .check-circle{background:#185FA5;border-color:#185FA5;color:#fff}
+  .check-lbl{font-size:9px;color:#aaa}
+  .btn{width:100%;padding:13px;border-radius:10px;border:1.5px solid #ccc;background:#fff;font-size:15px;font-weight:600;color:#1a1a1a;cursor:pointer;margin-top:10px;transition:.15s;touch-action:manipulation}
+  .btn:active{transform:scale(0.98)}
+  .btn-primary{background:#185FA5;border-color:#185FA5;color:#fff}
+  .btn-primary:disabled{background:#7aabcf;border-color:#7aabcf;cursor:not-allowed}
+  .err{font-size:12px;color:#c0392b;margin-top:8px;display:none;text-align:center}
+  .toast{border-radius:10px;padding:12px 14px;font-size:13px;margin-top:10px;display:none;text-align:center;font-weight:500}
+  .toast-ok{background:#d4edda;color:#155724}
+  .toast-wait{background:#fff3cd;color:#856404}
+  .toast-err{background:#f8d7da;color:#721c24}
+  .toast-warn{background:#fff3cd;color:#856404}
+  .painel{background:#fff;border:1px solid #e0e0d8;border-radius:12px;padding:1rem;margin-top:1.25rem}
+  .painel h2{font-size:15px;font-weight:600;margin-bottom:.75rem}
+  .painel-vazio{font-size:13px;color:#aaa;text-align:center;padding:1rem 0}
+  .card-aval{background:#f9f9f7;border:1px solid #e0e0d8;border-radius:8px;padding:10px;margin-bottom:8px;font-size:12px}
+  .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .card-grupo{font-weight:700;font-size:13px}
+  .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+  .b-ex{background:#d4edda;color:#155724}
+  .b-bom{background:#cce5ff;color:#004085}
+  .b-reg{background:#fff3cd;color:#856404}
+  .b-ins{background:#f8d7da;color:#721c24}
+  .card-scores{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:6px}
+  .card-score-item{background:#fff;border:1px solid #e0e0d8;border-radius:6px;padding:4px 6px;text-align:center}
+  .card-score-item span{display:block;font-weight:700;font-size:13px;color:#185FA5}
+  .card-score-item small{font-size:9px;color:#aaa}
+  .totais{background:#f5f5f3;border-radius:8px;padding:10px;margin-top:.75rem;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;text-align:center}
+  .totais div{font-size:10px;color:#888}
+  .totais span{display:block;font-size:18px;font-weight:700;color:#1a1a1a}
+  .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:.75rem}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Avaliação de Apresentação</h1>
+  <p class="subtitle">Introdução à Economia e Administração · 3º Período — Engenharia Mecânica</p>
+
+  <div class="id-badge">🔒 Avaliador: <b id="cod-display"></b></div>
+
+  <div class="instrucoes">
+    <b>Como avaliar:</b> Cada etapa vale <b>até 20 pontos</b> (total: <b>120 pts</b>).<br>
+    Etapas: <b>Diagnóstico, Reestruturação, Liderança e Pessoas, Monitoramento, Decisão Estratégica</b> e <b>Apresentação Final</b>.<br>
+    Selecione o grupo, escolha uma opção por etapa e toque em <b>Enviar avaliação</b>.
+  </div>
+
+  <div class="grupo-box">
+    <label for="grupo">Grupo avaliado</label>
+    <select id="grupo">
+      <option value="">— Selecione o grupo —</option>
+      <option>Grupo 1</option><option>Grupo 2</option><option>Grupo 3</option>
+      <option>Grupo 4</option><option>Grupo 5</option><option>Grupo 6</option>
+      <option>Grupo 7</option><option>Grupo 8</option><option>Grupo 9</option>
+      <option>Grupo 10</option><option>Grupo 11</option><option>Grupo 12</option>
+    </select>
+  </div>
+
+  <div id="etapas-container"></div>
+
+  <div class="etapa">
+    <p class="etapa-titulo">Etapa 6 — Apresentação Final</p>
+    <p class="etapa-sub">Pitch Executivo — máx. 20 pts</p>
+    <div class="pitch-section" id="pitch-grid"></div>
+  </div>
+
+  <p class="err" id="err">Selecione o grupo e preencha todas as etapas.</p>
+  <button class="btn btn-primary" id="btn-enviar" onclick="enviar()">Enviar avaliação</button>
+  <div class="toast toast-wait" id="t-wait">⏳ Enviando...</div>
+  <div class="toast toast-ok" id="t-ok">✅ Avaliação registrada com sucesso!</div>
+  <div class="toast toast-err" id="t-err">⚠️ Erro ao enviar. Verifique sua conexão.</div>
+  <div class="toast toast-warn" id="t-warn">🚫 Você já avaliou este grupo!</div>
+
+  <div class="painel">
+    <h2>Avaliações desta sessão</h2>
+    <p class="painel-vazio" id="vazio">Nenhuma avaliação registrada ainda.</p>
+    <div id="cards"></div>
+    <div class="totais" id="totais" style="display:none">
+      <div><span id="tot-aval">0</span>Avaliações</div>
+      <div><span id="tot-soma">0</span>Soma</div>
+      <div><span id="tot-media">0</span>Média</div>
+    </div>
+    <div class="btn-row" id="btn-painel" style="display:none">
+      <button class="btn" onclick="limparTudo()">Limpar sessão</button>
+      <button class="btn btn-primary" onclick="window.print()">Imprimir</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SHEETS_URL = "https://script.google.com/macros/s/AKfycbx7ELYUikNoXhnNflfiIxwpdEm4OqQ5ivXl-YkakvY53GmgvbIiUjncB4flI8bxEc_jGA/exec";
+
+// Gera código anônimo persistente por dispositivo/sessão
+function gerarCodigo(){
+  let cod = localStorage.getItem('av_cod');
+  if(!cod){
+    const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    cod='AV-'+Array.from({length:4},()=>chars[Math.floor(Math.random()*chars.length)]).join('');
+    localStorage.setItem('av_cod', cod);
+  }
+  return cod;
+}
+
+const COD = gerarCodigo();
+document.getElementById('cod-display').textContent = COD;
+
+// Registros de votos desta sessão: Set de "COD|Grupo"
+const votosRegistrados = new Set(JSON.parse(localStorage.getItem('av_votos')||'[]'));
+
+function salvarVotos(){
+  localStorage.setItem('av_votos', JSON.stringify([...votosRegistrados]));
+}
+
+const etapas = [
+  {titulo:"Etapa 1 — Diagnóstico", sub:"Planejamento — máx. 20 pts",
+   opcoes:["Diagnóstico superficial","Identificação correta dos problemas","Relação causa–efeito bem estruturada","Visão sistêmica (integra pessoas, estrutura e tecnologia)"],
+   pts:[5,10,15,20]},
+  {titulo:"Etapa 2 — Reestruturação", sub:"Organização — máx. 20 pts",
+   opcoes:["Mudanças genéricas","Coerência com problemas","Aplicação correta dos conceitos","Solução estratégica bem justificada"],
+   pts:[5,10,15,20]},
+  {titulo:"Etapa 3 — Liderança e Pessoas", sub:"Direção — máx. 20 pts",
+   opcoes:["Ações básicas","Integração entre equipes","Estratégias de liderança","Visão avançada (cultura, comportamento, alinhamento)"],
+   pts:[5,10,15,20]},
+  {titulo:"Etapa 4 — Monitoramento", sub:"Controle — máx. 20 pts",
+   opcoes:["Indicadores genéricos","Indicadores mensuráveis","Conexão com objetivos","Uso de feedback e melhoria contínua"],
+   pts:[5,10,15,20]},
+  {titulo:"Etapa 5 — Decisão Estratégica", sub:"Modelo Produtivo — máx. 20 pts",
+   opcoes:["Escolha sem justificativa","Justificativa básica","Alinhamento com cenário","Argumentação técnica e estratégica"],
+   pts:[5,10,15,20]}
+];
+
+const pitchCriterios = ["Clareza","Argumentação","Aplicação prática","Persuasão"];
+const avaliacoes = [];
+
+const ec = document.getElementById('etapas-container');
+etapas.forEach((e,i) => {
+  const d = document.createElement('div');
+  d.className = 'etapa';
+  d.innerHTML = `
+    <p class="etapa-titulo">${e.titulo}</p>
+    <p class="etapa-sub">${e.sub}</p>
+    <div class="likert">
+      ${e.opcoes.map((o,j) => `
+        <label class="likert-opt">
+          <input type="radio" name="e${i}" value="${j}">
+          <div class="opt-num">${j+1}</div>
+          <div class="opt-content">
+            <div class="opt-desc">${o}</div>
+            <div class="opt-pts">${e.pts[j]} pts</div>
+          </div>
+        </label>`).join('')}
+    </div>`;
+  ec.appendChild(d);
+});
+
+const pg = document.getElementById('pitch-grid');
+pitchCriterios.forEach((c,i) => {
+  const d = document.createElement('div');
+  d.className = 'pitch-item';
+  d.innerHTML = `<p class="pitch-label">${c} <span>— até 5 pts</span></p>
+    <div class="check-row">
+      ${[1,2,3,4,5].map(v=>`
+        <label class="check-opt">
+          <input type="radio" name="p${i}" value="${v}">
+          <div class="check-circle">${v}</div>
+          <span class="check-lbl">${v}pt</span>
+        </label>`).join('')}
+    </div>`;
+  pg.appendChild(d);
+});
+
+function conceito(t){
+  if(t>=108)return{txt:'Excelente',cls:'b-ex'};
+  if(t>=90)return{txt:'Bom',cls:'b-bom'};
+  if(t>=72)return{txt:'Regular',cls:'b-reg'};
+  return{txt:'Insuficiente',cls:'b-ins'};
+}
+
+function showToast(id, ms=3500){
+  ['t-wait','t-ok','t-err','t-warn'].forEach(x=>document.getElementById(x).style.display='none');
+  const el = document.getElementById(id);
+  el.style.display='block';
+  if(ms) setTimeout(()=>el.style.display='none', ms);
+}
+
+async function enviar(){
+  const err = document.getElementById('err');
+  const grupo = document.getElementById('grupo').value;
+  if(!grupo){err.style.display='block';return;}
+
+  // Trava duplo voto
+  const chave = `${COD}|${grupo}`;
+  if(votosRegistrados.has(chave)){
+    showToast('t-warn');
+    return;
+  }
+
+  const scores = [];
+  let valid = true;
+  for(let i=0;i<5;i++){
+    const s = document.querySelector(`input[name="e${i}"]:checked`);
+    if(!s){valid=false;break;}
+    scores.push(etapas[i].pts[parseInt(s.value)]);
+  }
+  let pitch=0;
+  if(valid){
+    for(let i=0;i<4;i++){
+      const s=document.querySelector(`input[name="p${i}"]:checked`);
+      if(!s){valid=false;break;}
+      pitch+=parseInt(s.value);
+    }
+  }
+  if(!valid){err.style.display='block';return;}
+  err.style.display='none';
+
+  scores.push(pitch);
+  const total=scores.reduce((a,b)=>a+b,0);
+
+  const btn=document.getElementById('btn-enviar');
+  btn.disabled=true;
+  showToast('t-wait', 0);
+
+  const payload={avaliador:COD, grupo, e1:scores[0],e2:scores[1],e3:scores[2],e4:scores[3],e5:scores[4],e6:scores[5], total};
+
+  try{
+    await fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    votosRegistrados.add(chave);
+    salvarVotos();
+    avaliacoes.push({grupo,scores,total});
+    renderCards();
+    limparForm();
+    showToast('t-ok');
+  }catch(e){
+    showToast('t-err');
+  }
+  btn.disabled=false;
+}
+
+function renderCards(){
+  const cards=document.getElementById('cards');
+  cards.innerHTML='';
+  avaliacoes.forEach((a,i)=>{
+    const c=conceito(a.total);
+    const nomes=['Diag.','Reest.','Lider.','Monit.','Decis.','Pitch'];
+    const div=document.createElement('div');
+    div.className='card-aval';
+    div.innerHTML=`
+      <div class="card-header">
+        <span class="card-grupo">${a.grupo}</span>
+        <span><b>${a.total}</b>/120 &nbsp;<span class="badge ${c.cls}">${c.txt}</span></span>
+      </div>
+      <div class="card-scores">
+        ${a.scores.map((s,j)=>`<div class="card-score-item"><span>${s}</span><small>${nomes[j]}</small></div>`).join('')}
+      </div>`;
+    cards.appendChild(div);
+  });
+  const soma=avaliacoes.reduce((a,b)=>a+b.total,0);
+  document.getElementById('tot-aval').textContent=avaliacoes.length;
+  document.getElementById('tot-soma').textContent=soma;
+  document.getElementById('tot-media').textContent=(soma/avaliacoes.length).toFixed(1);
+  document.getElementById('vazio').style.display='none';
+  document.getElementById('totais').style.display='grid';
+  document.getElementById('btn-painel').style.display='grid';
+}
+
+function limparForm(){
+  document.getElementById('grupo').value='';
+  document.querySelectorAll('input[type=radio]').forEach(r=>r.checked=false);
+}
+
+function limparTudo(){
+  if(!confirm('Limpar avaliações desta sessão?'))return;
+  avaliacoes.length=0;
+  document.getElementById('cards').innerHTML='';
+  document.getElementById('vazio').style.display='block';
+  document.getElementById('totais').style.display='none';
+  document.getElementById('btn-painel').style.display='none';
+}
+</script>
+</body>
+</html>
